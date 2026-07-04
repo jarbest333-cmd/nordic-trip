@@ -1115,20 +1115,9 @@
   <!-- ════ 정보 ════ -->
   <div class="panel" id="panel-info">
     <div class="info-sec">
-      <div class="info-hd">🚨 비상 연락처</div>
-      <a class="info-row info-call" href="tel:112"><span class="ir-label">노르웨이·덴마크 긴급(경찰)</span><span class="ir-value">112</span></a>
-      <a class="info-row info-call" href="tel:113"><span class="ir-label">노르웨이 구급차</span><span class="ir-value">113</span></a>
-      <a class="info-row info-call" href="tel:110"><span class="ir-label">노르웨이 소방</span><span class="ir-value">110</span></a>
-      <a class="info-row info-call" href="tel:+4790263544"><span class="ir-label">주노르웨이 대사관 긴급</span><span class="ir-value">+47 9026 3544</span></a>
-      <a class="info-row info-call" href="tel:+4525217461"><span class="ir-label">주덴마크 대사관 긴급</span><span class="ir-value">+45 2521 7461</span></a>
-      <a class="info-row info-call" href="tel:+82232100404"><span class="ir-label">영사콜센터(서울·24시간)</span><span class="ir-value">+82 2-3210-0404</span></a>
-      <div class="info-note" style="margin-top:8px">탭하면 바로 전화 걸려요. 대사관 대표번호: 노르웨이 +47 2254 7090 / 덴마크 +45 3946 0400</div>
-    </div>
-
-    <div class="info-sec">
       <div class="info-hd">🕐 시차</div>
       <div class="info-row"><span class="ir-label">한국과의 차이</span><span class="ir-value">7시간 느림</span></div>
-      <div class="info-note" style="margin-top:8px">한국 오후 7시 = 현지 낮 12시 (여름 서머타임 기준)</div>
+      <div class="info-note" style="margin-top:8px">노르웨이·덴마크 <b>둘 다 같아요</b>. 한국 오후 7시 = 현지 낮 12시 (여름 서머타임 기준)</div>
     </div>
 
     <div class="info-sec">
@@ -1139,9 +1128,10 @@
     </div>
 
     <div class="info-sec">
-      <div class="info-hd">🔌 전기·플러그</div>
-      <div class="info-row"><span class="ir-label">전압 / 타입</span><span class="ir-value">230V · C/F형</span></div>
-      <div class="info-note" style="margin-top:8px">한국 플러그를 그대로 꽂을 수 있어요. 별도 어댑터 필요 없음 👍</div>
+      <div class="info-hd">🔌 전기·콘센트</div>
+      <div class="info-row"><span class="ir-label">전압</span><span class="ir-value">230V (한국과 비슷)</span></div>
+      <div class="info-row"><span class="ir-label">콘센트 모양</span><span class="ir-value">한국과 동일</span></div>
+      <div class="info-note" style="margin-top:8px">쉽게 말하면 <b>한국이랑 똑같아요.</b> 전압도 220~230V로 비슷하고 벽 콘센트 구멍도 한국과 같은 <b>둥근 2핀</b>이라, 한국에서 쓰던 <b>충전기·전자제품을 어댑터 없이 그대로</b> 꽂아 쓰면 돼요 👍</div>
     </div>
 
     <div class="info-sec">
@@ -1149,6 +1139,14 @@
       <div class="info-row"><span class="ir-label">피오르 지역</span><span class="ir-value">낮 15~20°C</span></div>
       <div class="info-row"><span class="ir-label">코펜하겐</span><span class="ir-value">17~22°C</span></div>
       <div class="info-note" style="margin-top:8px">아침·저녁은 쌀쌀하고 비가 잦아요. <b>방수 재킷 + 얇은 옷 여러 겹 + 편한 방수 신발</b>을 추천해요.</div>
+    </div>
+    <div class="info-sec">
+      <div class="info-hd">💡 알아두면 좋은 꿀팁</div>
+      <div class="info-row"><span class="ir-label">💧 수돗물</span><span class="ir-value">그냥 마셔도 OK</span></div>
+      <div class="info-row"><span class="ir-label">💳 현금</span><span class="ir-value">거의 필요 없음</span></div>
+      <div class="info-row"><span class="ir-label">🛒 일요일</span><span class="ir-value">상점 대부분 휴무</span></div>
+      <div class="info-row"><span class="ir-label">🚻 공중화장실</span><span class="ir-value">유료(카드 가능)</span></div>
+      <div class="info-note" style="margin-top:8px">· 수돗물이 깨끗해서 생수 안 사도 돼요(물값이 비쌈).<br>· 카드·애플페이가 어디서나 돼서 현금 거의 안 써요.<br>· 노르웨이는 일요일에 큰 마트·상점이 대부분 문 닫아요(주류는 평일 전용매장만).<br>· 8월에도 밤 10시까지 밝아요 — 안대 있으면 숙면에 좋아요.<br>· 운전은 우측통행, 낮에도 <b>헤드라이트 항상 켜기</b>가 의무이고 과속 벌금이 매우 비싸요.</div>
     </div>
   </div><!-- /info -->
 
@@ -1231,6 +1229,7 @@
     const dot=document.createElement('div'); dot.className='tab-dot'; btn.appendChild(dot);
     window.scrollTo({top:0,behavior:'smooth'});
     if(name==='places') setTimeout(buildMap,100);
+    var _cal=document.querySelector('.cal-card'); if(_cal) _cal.style.display=(name==='info')?'none':'';
   }
 
   function toggleDay(header) {
