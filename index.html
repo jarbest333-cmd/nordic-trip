@@ -252,11 +252,6 @@
     .day-tips-body.hidden { display: none; }
     .tip-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f5f7fa; }
     .tip-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .tip-item.tip-link { cursor: pointer; position: relative; padding-right: 26px; border-radius: 8px; transition: background .15s; -webkit-tap-highlight-color: rgba(0,0,0,0.04); }
-    .tip-item.tip-link { padding-left: 6px; margin-left: -6px; }
-    .tip-item.tip-link:active { background: #eef3ff; }
-    .tip-item.tip-link .tip-map-ico { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 15px; opacity: .5; }
-    .tip-item.tip-link .tip-name { color: #1d4ed8; }
     .tip-emoji { font-size: 18px; flex-shrink: 0; width: 26px; text-align: center; margin-top: 1px; }
     .tip-name { font-size: 14px; font-weight: 700; color: #1a1a2e; }
     .tip-desc { font-size: 12px; color: #8b9ab0; margin-top: 3px; line-height: 1.4; }
@@ -297,6 +292,13 @@
     .map-title { font-size: 13px; font-weight: 800; color: #1a1a2e; }
     .map-container { background: #e8ecf2; border-radius: 14px; overflow: hidden; position: relative; height: 300px; }
     #tripMap { width: 100%; height: 100%; }
+    .day-map-wrap { margin: 2px 0 14px; }
+    .day-map-label { font-size: 12px; font-weight: 800; color: #1a1a2e; margin: 0 0 7px; display: flex; align-items: center; gap: 5px; }
+    .day-map-label .dm-route { font-weight: 600; color: #6b7a90; font-size: 11px; }
+    .day-map { width: 100%; height: 200px; border-radius: 13px; overflow: hidden; background: #e8ecf2; }
+    .day-map .leaflet-container { font-family: inherit; }
+    .dm-pin { display: flex; flex-direction: column; align-items: center; pointer-events: auto; }
+    .dm-pin .dm-emoji { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 2px solid #3a7bd5; box-shadow: 0 1px 5px rgba(0,0,0,.3); display: flex; align-items: center; justify-content: center; font-size: 14px; }
     .leaflet-popup-content-wrapper { border-radius: 10px !important; font-family: -apple-system,'Apple SD Gothic Neo',sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,.15) !important; }
     .leaflet-popup-content { font-size: 12px; margin: 8px 12px; }
     .map-open-btn { display: flex; align-items: center; gap: 6px; justify-content: center; background: #fff; border: 1.5px solid #e4e8ef; border-radius: 12px; padding: 10px; font-size: 12px; font-weight: 700; color: #1a1a2e; text-decoration: none; margin-top: 6px; }
@@ -1244,6 +1246,7 @@
     if (!el) return;
     el.querySelector('.day-header').classList.add('open');
     el.querySelector('.day-body').classList.remove('hidden');
+    setTimeout(() => window.buildDayMap && window.buildDayMap(dayNum), 150);
     setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
   }
   window.addEventListener('DOMContentLoaded', autoOpenToday);
@@ -1261,6 +1264,7 @@
   function toggleDay(header) {
     const body=header.nextElementSibling, isOpen=header.classList.contains('open');
     header.classList.toggle('open',!isOpen); body.classList.toggle('hidden',isOpen);
+    if(!isOpen){ const g=header.closest('.day-group'); if(g){ const n=+String(g.id).replace('day-',''); setTimeout(()=>window.buildDayMap&&window.buildDayMap(n),90); } }
   }
 
   function scrollToDay(n) {
@@ -1269,6 +1273,7 @@
       const el=document.getElementById('day-'+n); if(!el) return;
       const hdr=el.querySelector('.day-header'), body=el.querySelector('.day-body');
       if(!hdr.classList.contains('open')){ hdr.classList.add('open'); body.classList.remove('hidden'); }
+      setTimeout(()=>window.buildDayMap&&window.buildDayMap(n),150);
       el.scrollIntoView({behavior:'smooth',block:'start'});
       setTimeout(()=>{ hdr.classList.add('flash'); setTimeout(()=>hdr.classList.remove('flash'),1000); },400);
     }));
@@ -1338,35 +1343,123 @@
     setTimeout(()=>map.invalidateSize(),200);
   }
 
+  /* ── 날짜별 미니 지도 (경로 + 명소) ── */
+  const dayMapData = {
+    1: { route:[[60.3913,5.3221]], spots:[
+      {n:'브뤼겐 (Bryggen)', e:'🏘️', ll:[60.3975,5.3225]},
+      {n:'플뢰이엔 산 (Fløibanen)', e:'⛰️', ll:[60.3958,5.3510]},
+      {n:'피쉬마켓 (Fisketorget)', e:'🐟', ll:[60.3955,5.3235]},
+      {n:'브뤼겐스 박물관', e:'🏛️', ll:[60.3984,5.3218]},
+      {n:'코데 미술관 (KODE)', e:'🎨', ll:[60.3915,5.3270]},
+    ]},
+    2: { route:[[60.3913,5.3221],[60.8775,6.8313],[60.8632,7.1186]], spots:[
+      {n:'스탈하임 전망대 (Stalheim)', e:'🛣️', ll:[60.8339,6.6669]},
+      {n:'뇨뢰피오르 크루즈 (Nærøyfjord)', e:'🚢', ll:[60.8833,6.9000]},
+      {n:'나르다르헤임르 바이킹 빌리지', e:'🛖', ll:[60.8760,6.8330]},
+      {n:'운드레달 목조교회', e:'⛪', ll:[60.9203,7.1017]},
+      {n:'스테가스테인 전망대 (Stegastein)', e:'🏔️', ll:[60.9036,7.2072]},
+    ]},
+    3: { route:[[60.8632,7.1186],[61.0990,7.4764],[61.8685,6.8525]], spots:[
+      {n:'플롬 산악열차 (Flåmsbana)', e:'🚞', ll:[60.8632,7.1136]},
+      {n:'쇼포센 폭포 (Kjosfossen)', e:'💧', ll:[60.8340,7.2030]},
+      {n:'로엔 스카이리프트 (Loen Skylift)', e:'🚡', ll:[61.8685,6.8525]},
+      {n:'브릭스달 빙하 (Briksdalsbreen)', e:'🧊', ll:[61.6646,6.8620]},
+      {n:'이너피오르 (Innvikfjorden)', e:'🏞️', ll:[61.8500,6.7000]},
+    ]},
+    4: { route:[[61.8685,6.8525],[62.0888,6.8859],[62.1024,7.2052]], spots:[
+      {n:'게이랑에르 피오르 카페리', e:'⛴️', ll:[62.0950,7.0450]},
+      {n:'일곱자매 폭포 (De Syv Søstrene)', e:'💦', ll:[62.0972,7.1417]},
+      {n:'독수리 로드 (Ørnesvingen)', e:'🦅', ll:[62.1075,7.1739]},
+      {n:'달스니바 스카이워크 (Dalsnibba)', e:'🏔️', ll:[62.0553,7.2733]},
+      {n:'신부의 베일 폭포 (Brudesløret)', e:'💧', ll:[62.0983,7.1300]},
+    ]},
+    5: { route:[[62.1024,7.2052],[62.4682,7.6591],[62.4722,6.1495]], spots:[
+      {n:'악슬라 전망대 (Fjellstua)', e:'🔭', ll:[62.4722,6.1590]},
+      {n:'유겐트스틸센터렛', e:'🏛️', ll:[62.4722,6.1547]},
+      {n:'아틀란틱 해양공원', e:'🐟', ll:[62.4586,6.0872]},
+      {n:'순뫼레 박물관', e:'🏛️', ll:[62.4508,6.2361]},
+      {n:'Brosundet 운하', e:'🌅', ll:[62.4720,6.1520]},
+    ]},
+    6: { route:[[62.4722,6.1495],[62.4581,7.6706],[62.5675,7.6875]], spots:[
+      {n:'트롤스티엔 (Trollstigen)', e:'🛣️', ll:[62.4581,7.6706]},
+      {n:'트롤스티엔 방문자 센터', e:'🏢', ll:[62.4581,7.6706]},
+      {n:'롬스달렌 계곡 (Romsdalen)', e:'⛰️', ll:[62.4500,7.7500]},
+      {n:'히외룬피오르 (Hjørundfjord)', e:'🏞️', ll:[62.2000,6.7500]},
+      {n:'안달스네스 (Åndalsnes)', e:'🏘️', ll:[62.5675,7.6875]},
+    ]},
+    7: { route:[[61.5000,6.2800],[60.9036,7.2072],[60.6294,6.4147],[60.3913,5.3221]], spots:[
+      {n:'우르네스 목조교회 (Urnes)', e:'⛪', ll:[61.2922,7.3202]},
+      {n:'스테가스테인 전망대 (Stegastein)', e:'🏔️', ll:[60.9036,7.2072]},
+      {n:'소그네피오르 카페리 (Sognefjord)', e:'⛴️', ll:[61.1000,6.6000]},
+      {n:'보스 마을 (Voss)', e:'🏘️', ll:[60.6294,6.4147]},
+      {n:'베르겐 요새 (Bergenhus)', e:'🏰', ll:[60.3997,5.3167]},
+    ]},
+    8: { route:[], spots:[
+      {n:'뉘하운 (Nyhavn)', e:'⚓', ll:[55.6797,12.5903]},
+      {n:'크리스티안스보르 궁전 탑', e:'🏛️', ll:[55.6759,12.5800]},
+      {n:'로젠보르 성 (Rosenborg)', e:'🏰', ll:[55.6857,12.5772]},
+      {n:'스트뢰이에 (Strøget)', e:'🛍️', ll:[55.6786,12.5750]},
+      {n:'인어공주 상 (Little Mermaid)', e:'🧜', ll:[55.6929,12.5993]},
+    ]},
+    9: { route:[], spots:[
+      {n:'뉘하운 이른 아침 (Nyhavn)', e:'⚓', ll:[55.6797,12.5903]},
+      {n:'티볼리 공원 (Tivoli)', e:'🎡', ll:[55.6737,12.5681]},
+      {n:'스트뢰이에 (Strøget)', e:'🛍️', ll:[55.6786,12.5750]},
+      {n:'칼스버그 방문자 센터 (Carlsberg)', e:'🍺', ll:[55.6653,12.5386]},
+      {n:'CPH 공항 면세점', e:'✈️', ll:[55.6180,12.6508]},
+    ]},
+  };
+
+  const _dayMaps = {};
+  function buildDayMap(n){
+    const data = dayMapData[n]; if(!data) return;
+    const el = document.getElementById('daymap-'+n); if(!el) return;
+    if(_dayMaps[n]){ _dayMaps[n].invalidateSize(); return; }
+    if(!_leafletReady || typeof L==='undefined'){ setTimeout(()=>buildDayMap(n),150); return; }
+    if(!el.offsetParent || el.clientHeight===0){ setTimeout(()=>buildDayMap(n),150); return; }
+    const map = L.map('daymap-'+n, {zoomControl:false, attributionControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, keyboard:false, touchZoom:false, tap:true});
+    _dayMaps[n] = map;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+    const pts = [];
+    if(data.route && data.route.length){
+      data.route.forEach(p=>pts.push(p));
+      if(data.route.length>=2){
+        L.polyline(data.route,{color:'#3a7bd5',weight:3,opacity:.7,dashArray:'7,6'}).addTo(map);
+        addArrows(map,data.route,'#3a7bd5');
+      }
+    }
+    (data.spots||[]).forEach(s=>{
+      pts.push(s.ll);
+      const html = '<div class="dm-pin"><div class="dm-emoji">'+(s.e||'📍')+'</div></div>';
+      L.marker(s.ll,{icon:L.divIcon({html:html,className:'',iconSize:[26,26],iconAnchor:[13,13]})}).addTo(map).bindPopup('<b>'+s.n+'</b>');
+    });
+    const fit = ()=>{ if(pts.length===1){ map.setView(pts[0],13); } else if(pts.length){ map.fitBounds(pts,{padding:[26,26],maxZoom:12}); } };
+    fit();
+    setTimeout(()=>{ map.invalidateSize(); fit(); },230);
+  }
+  window.buildDayMap = buildDayMap;
+
+  // 각 날짜 카드 상단에 지도 컨테이너 삽입 (동기 실행)
+  (function injectDayMaps(){
+    document.querySelectorAll('.day-group').forEach(g=>{
+      const n = +String(g.id).replace('day-','');
+      if(!dayMapData[n]) return;
+      const body = g.querySelector('.day-body'); if(!body) return;
+      if(body.querySelector('.day-map-wrap')) return;
+      const place = (g.querySelector('.day-place')||{}).textContent || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'day-map-wrap';
+      wrap.innerHTML = '<div class="day-map-label">🗺️ 그날의 지도 <span class="dm-route">'+place+'</span></div><div class="day-map" id="daymap-'+n+'"></div>';
+      body.insertBefore(wrap, body.firstChild);
+    });
+  })();
+
   (function loadLeaflet(){
     const s=document.createElement('script');
     s.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
     s.onload=()=>{_leafletReady=true;};
     s.onerror=()=>{const s2=document.createElement('script');s2.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';s2.onload=()=>{_leafletReady=true;};document.head.appendChild(s2);};
     document.head.appendChild(s);
-  })();
-
-  // "오늘 가볼 만한 곳" 항목을 눌러 구글 지도로 연결
-  (function linkTipsToMaps(){
-    document.querySelectorAll('.tip-item').forEach(function(item){
-      var nameEl = item.querySelector('.tip-name');
-      if(!nameEl) return;
-      var q = nameEl.textContent.trim();
-      if(!q) return;
-      item.classList.add('tip-link');
-      item.setAttribute('role','link');
-      item.setAttribute('tabindex','0');
-      item.setAttribute('aria-label', q + ' 구글 지도에서 열기');
-      var ico = document.createElement('span');
-      ico.className = 'tip-map-ico';
-      ico.textContent = '🗺️';
-      item.appendChild(ico);
-      var open = function(){
-        window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q), '_blank', 'noopener');
-      };
-      item.addEventListener('click', open);
-      item.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
-    });
   })();
 </script>
 </body>
