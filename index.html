@@ -1132,10 +1132,10 @@
     </div>
 
     <div class="info-sec">
-      <div class="info-hd">💳 통화·환율 <span class="info-badge">대략</span></div>
-      <div class="info-row"><span class="ir-label">노르웨이 크로네 (NOK)</span><span class="ir-value">1 NOK ≈ 135원</span></div>
-      <div class="info-row"><span class="ir-label">덴마크 크로네 (DKK)</span><span class="ir-value">1 DKK ≈ 234원</span></div>
-      <div class="info-note" style="margin-top:8px">2026년 7월 기준 대략치예요(변동). 카드 결제가 대부분 되고, 팁은 필수 아니에요. 물가는 한국보다 높아요.</div>
+      <div class="info-hd">💳 통화·환율 <span class="info-badge" id="fxBadge">대략</span></div>
+      <div class="info-row"><span class="ir-label">노르웨이 크로네 (NOK)</span><span class="ir-value" id="fxNok">1 NOK ≈ 135원</span></div>
+      <div class="info-row"><span class="ir-label">덴마크 크로네 (DKK)</span><span class="ir-value" id="fxDkk">1 DKK ≈ 234원</span></div>
+      <div class="info-note" style="margin-top:8px" id="fxNote">2026년 7월 기준 대략치예요(변동). 카드 결제가 대부분 되고, 팁은 필수 아니에요. 물가는 한국보다 높아요.</div>
     </div>
 
     <div class="info-sec">
@@ -1331,6 +1331,29 @@
     });
   }
   document.querySelectorAll('.day-tips-body .tip-item').forEach(wireTipItem);
+
+  // ── 환율 자동 갱신 (무료 API 2곳 시도, 실패 시 기본값 유지) ──
+  (function liveFx(){
+    function apply(nokKrw, dkkKrw, when){
+      if(!nokKrw) return;
+      var elN=document.getElementById('fxNok'), elD=document.getElementById('fxDkk');
+      var elB=document.getElementById('fxBadge'), elNt=document.getElementById('fxNote');
+      if(elN) elN.textContent='1 NOK ≈ '+nokKrw.toFixed(1)+'원';
+      if(elD && dkkKrw) elD.textContent='1 DKK ≈ '+dkkKrw.toFixed(1)+'원';
+      if(elB) elB.textContent='자동';
+      if(elNt) elNt.innerHTML='자동으로 최신 환율을 불러와요'+(when?(' · 기준: '+when):'')+'. 카드 결제가 대부분 되고, 팁은 필수 아니에요. 물가는 한국보다 높아요.';
+    }
+    // 1차: open.er-api.com
+    fetch('https://open.er-api.com/v6/latest/NOK').then(function(r){return r.json();}).then(function(j){
+      if(j&&j.rates&&j.rates.KRW){ apply(j.rates.KRW, j.rates.DKK?j.rates.KRW/j.rates.DKK:null, (j.time_last_update_utc||'').slice(0,16)); return; }
+      throw new Error('no data');
+    }).catch(function(){
+      // 2차: frankfurter.app
+      fetch('https://api.frankfurter.app/latest?from=NOK&to=KRW,DKK').then(function(r){return r.json();}).then(function(j){
+        if(j&&j.rates&&j.rates.KRW){ apply(j.rates.KRW, j.rates.DKK?j.rates.KRW/j.rates.DKK:null, j.date||''); }
+      }).catch(function(){ /* 둘 다 실패 → 기본값 유지 */ });
+    });
+  })();
 
   (function loadLeaflet(){
     const s=document.createElement('script');
