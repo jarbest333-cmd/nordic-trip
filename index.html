@@ -292,13 +292,17 @@
     .map-title { font-size: 13px; font-weight: 800; color: #1a1a2e; }
     .map-container { background: #e8ecf2; border-radius: 14px; overflow: hidden; position: relative; height: 300px; }
     #tripMap { width: 100%; height: 100%; }
-    .day-map-wrap { margin: 2px 0 14px; }
-    .day-map-label { font-size: 12px; font-weight: 800; color: #1a1a2e; margin: 0 0 7px; display: flex; align-items: center; gap: 5px; }
-    .day-map-label .dm-route { font-weight: 600; color: #6b7a90; font-size: 11px; }
-    .day-map { width: 100%; height: 200px; border-radius: 13px; overflow: hidden; background: #e8ecf2; }
-    .day-map .leaflet-container { font-family: inherit; }
-    .dm-pin { display: flex; flex-direction: column; align-items: center; pointer-events: auto; }
-    .dm-pin .dm-emoji { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 2px solid #3a7bd5; box-shadow: 0 1px 5px rgba(0,0,0,.3); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .tip-item.tip-clickable { cursor: pointer; border-radius: 8px; padding-left: 6px; margin-left: -6px; transition: background .15s; -webkit-tap-highlight-color: rgba(0,0,0,.04); }
+    .tip-item.tip-clickable:active { background: #eef3ff; }
+    .tip-item.tip-active { background: #eaf1ff; }
+    .tip-item.tip-active .tip-name { color: #1d4ed8; }
+    .tips-map-wrap { margin: 10px 0 2px; }
+    .tips-map-wrap.hidden { display: none; }
+    .tips-map-cap { font-size: 11px; color: #6b7a90; margin-bottom: 6px; line-height: 1.4; }
+    .tips-map { width: 100%; height: 190px; border-radius: 12px; overflow: hidden; background: #e8ecf2; }
+    .tips-map .leaflet-container { font-family: inherit; }
+    .dm-pin { display: flex; flex-direction: column; align-items: center; }
+    .dm-pin .dm-emoji { width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 2.5px solid #3a7bd5; box-shadow: 0 1px 6px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; font-size: 15px; }
     .leaflet-popup-content-wrapper { border-radius: 10px !important; font-family: -apple-system,'Apple SD Gothic Neo',sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,.15) !important; }
     .leaflet-popup-content { font-size: 12px; margin: 8px 12px; }
     .map-open-btn { display: flex; align-items: center; gap: 6px; justify-content: center; background: #fff; border: 1.5px solid #e4e8ef; border-radius: 12px; padding: 10px; font-size: 12px; font-weight: 700; color: #1a1a2e; text-decoration: none; margin-top: 6px; }
@@ -1190,6 +1194,8 @@
   <button class="tab-btn active" id="tab-itinerary" onclick="switchTab('itinerary',this)"><span class="ti">🗓️</span><span>일정</span><div class="tab-dot"></div></button>
 
   <button class="tab-btn" id="tab-transport" onclick="switchTab('transport',this)"><span class="ti">✈️</span><span>교통</span></button>
+
+  <button class="tab-btn" id="tab-places" onclick="switchTab('places',this)"><span class="ti">🗺️</span><span>경로</span></button>
 </nav>
 
 <div class="tooltip-popup hidden" id="tooltipPopup">
@@ -1246,7 +1252,6 @@
     if (!el) return;
     el.querySelector('.day-header').classList.add('open');
     el.querySelector('.day-body').classList.remove('hidden');
-    setTimeout(() => window.buildDayMap && window.buildDayMap(dayNum), 150);
     setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
   }
   window.addEventListener('DOMContentLoaded', autoOpenToday);
@@ -1264,7 +1269,6 @@
   function toggleDay(header) {
     const body=header.nextElementSibling, isOpen=header.classList.contains('open');
     header.classList.toggle('open',!isOpen); body.classList.toggle('hidden',isOpen);
-    if(!isOpen){ const g=header.closest('.day-group'); if(g){ const n=+String(g.id).replace('day-',''); setTimeout(()=>window.buildDayMap&&window.buildDayMap(n),90); } }
   }
 
   function scrollToDay(n) {
@@ -1273,7 +1277,6 @@
       const el=document.getElementById('day-'+n); if(!el) return;
       const hdr=el.querySelector('.day-header'), body=el.querySelector('.day-body');
       if(!hdr.classList.contains('open')){ hdr.classList.add('open'); body.classList.remove('hidden'); }
-      setTimeout(()=>window.buildDayMap&&window.buildDayMap(n),150);
       el.scrollIntoView({behavior:'smooth',block:'start'});
       setTimeout(()=>{ hdr.classList.add('flash'); setTimeout(()=>hdr.classList.remove('flash'),1000); },400);
     }));
@@ -1410,47 +1413,70 @@
     ]},
   };
 
-  const _dayMaps = {};
-  function buildDayMap(n){
-    const data = dayMapData[n]; if(!data) return;
-    const el = document.getElementById('daymap-'+n); if(!el) return;
-    if(_dayMaps[n]){ _dayMaps[n].invalidateSize(); return; }
-    if(!_leafletReady || typeof L==='undefined'){ setTimeout(()=>buildDayMap(n),150); return; }
-    if(!el.offsetParent || el.clientHeight===0){ setTimeout(()=>buildDayMap(n),150); return; }
-    const map = L.map('daymap-'+n, {zoomControl:false, attributionControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, keyboard:false, touchZoom:false, tap:true});
-    _dayMaps[n] = map;
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
-    const pts = [];
-    if(data.route && data.route.length){
-      data.route.forEach(p=>pts.push(p));
-      if(data.route.length>=2){
-        L.polyline(data.route,{color:'#3a7bd5',weight:3,opacity:.7,dashArray:'7,6'}).addTo(map);
-        addArrows(map,data.route,'#3a7bd5');
-      }
-    }
-    (data.spots||[]).forEach(s=>{
-      pts.push(s.ll);
-      const html = '<div class="dm-pin"><div class="dm-emoji">'+(s.e||'📍')+'</div></div>';
-      L.marker(s.ll,{icon:L.divIcon({html:html,className:'',iconSize:[26,26],iconAnchor:[13,13]})}).addTo(map).bindPopup('<b>'+s.n+'</b>');
-    });
-    const fit = ()=>{ if(pts.length===1){ map.setView(pts[0],13); } else if(pts.length){ map.fitBounds(pts,{padding:[26,26],maxZoom:12}); } };
-    fit();
-    setTimeout(()=>{ map.invalidateSize(); fit(); },230);
-  }
-  window.buildDayMap = buildDayMap;
+  // ── '오늘 가볼 만한 곳' 온디맨드 위치 지도 ──
+  const _tipsMaps = {};   // dayNum -> Leaflet map
+  const _tipsSel  = {};   // dayNum -> 선택된 index
 
-  // 각 날짜 카드 상단에 지도 컨테이너 삽입 (동기 실행)
-  (function injectDayMaps(){
+  function ensureTipsMap(n, cb){
+    if(_tipsMaps[n]){ cb(_tipsMaps[n]); return; }
+    if(!_leafletReady || typeof L==='undefined'){ setTimeout(()=>ensureTipsMap(n,cb),150); return; }
+    const el = document.getElementById('tipsmap-'+n); if(!el) return;
+    if(!el.offsetParent || el.clientHeight===0){ setTimeout(()=>ensureTipsMap(n,cb),150); return; }
+    const map = L.map('tipsmap-'+n, {zoomControl:false, attributionControl:false, dragging:true, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, keyboard:false, touchZoom:true, tap:true});
+    _tipsMaps[n] = map;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+    const data = dayMapData[n];
+    if(data && data.route && data.route.length>=2){
+      L.polyline(data.route,{color:'#3a7bd5',weight:2.5,opacity:.5,dashArray:'6,6'}).addTo(map);
+    }
+    map._spotMarker = null;
+    setTimeout(()=>map.invalidateSize(),200);
+    cb(map);
+  }
+
+  function showTipLocation(n, idx){
+    const data = dayMapData[n]; if(!data || !data.spots[idx]) return;
+    const spot = data.spots[idx];
+    const wrap = document.getElementById('tipsmapwrap-'+n);
+    // 같은 항목을 이미 선택한 상태에서 다시 탭 -> 구글지도
+    if(_tipsSel[n]===idx && wrap && !wrap.classList.contains('hidden')){
+      window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(spot.n),'_blank','noopener');
+      return;
+    }
+    _tipsSel[n] = idx;
+    const list = document.getElementById('tips-'+n);
+    if(list) list.querySelectorAll('.tip-item').forEach((it,i)=>it.classList.toggle('tip-active', i===idx));
+    if(wrap) wrap.classList.remove('hidden');
+    const cap = document.getElementById('tipscap-'+n);
+    if(cap) cap.innerHTML = '📍 <b>'+spot.n+'</b> · 한 번 더 누르면 구글지도로 열려요';
+    ensureTipsMap(n,(map)=>{
+      if(map._spotMarker) map.removeLayer(map._spotMarker);
+      const html = '<div class="dm-pin"><div class="dm-emoji">'+(spot.e||'📍')+'</div></div>';
+      map._spotMarker = L.marker(spot.ll,{icon:L.divIcon({html:html,className:'',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map);
+      map._spotMarker.bindPopup('<b>'+spot.n+'</b>');
+      map.invalidateSize();
+      map.setView(spot.ll, 12, {animate:true});
+    });
+  }
+  window.showTipLocation = showTipLocation;
+
+  // tips 목록에 지도 영역 삽입 & 항목 클릭 연결 (동기 실행)
+  (function setupTips(){
     document.querySelectorAll('.day-group').forEach(g=>{
       const n = +String(g.id).replace('day-','');
-      if(!dayMapData[n]) return;
-      const body = g.querySelector('.day-body'); if(!body) return;
-      if(body.querySelector('.day-map-wrap')) return;
-      const place = (g.querySelector('.day-place')||{}).textContent || '';
-      const wrap = document.createElement('div');
-      wrap.className = 'day-map-wrap';
-      wrap.innerHTML = '<div class="day-map-label">🗺️ 그날의 지도 <span class="dm-route">'+place+'</span></div><div class="day-map" id="daymap-'+n+'"></div>';
-      body.insertBefore(wrap, body.firstChild);
+      const data = dayMapData[n]; if(!data) return;
+      const tips = g.querySelector('.day-tips'); if(!tips) return;
+      const bodyList = tips.querySelector('.day-tips-body'); if(!bodyList) return;
+      bodyList.id = 'tips-'+n;
+      const mapWrap = document.createElement('div');
+      mapWrap.className = 'tips-map-wrap hidden';
+      mapWrap.id = 'tipsmapwrap-'+n;
+      mapWrap.innerHTML = '<div class="tips-map-cap" id="tipscap-'+n+'"></div><div class="tips-map" id="tipsmap-'+n+'"></div>';
+      bodyList.appendChild(mapWrap);
+      bodyList.querySelectorAll('.tip-item').forEach((it,i)=>{
+        it.classList.add('tip-clickable');
+        it.addEventListener('click',()=>showTipLocation(n,i));
+      });
     });
   })();
 
