@@ -1100,10 +1100,6 @@
       <a class="map-open-btn" href="https://maps.app.goo.gl/PWbXh29reK59HAGb7" target="_blank"><span>📍</span> 내 저장 구글 지도 열기</a>
     </div>
 
-    <div class="route-date-row" id="routeDateRow"></div>
-    <div class="route-day-detail" id="routeDayDetail">
-      <div class="route-hint">위 날짜를 누르면 그날 일정이 여기에 표시돼요 🗓️</div>
-    </div>
   </div><!-- /places -->
 
 </div><!-- /content -->
@@ -1250,7 +1246,7 @@
     _mapInited=true;
     const map=L.map('tripMap',{zoomControl:true,attributionControl:false,minZoom:5}).setView([61.2,7.0],6);
     window._tripMapInstance=map;
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd'}).addTo(map);
     const nPts=waypoints.slice(0,10).map(w=>w.latlng);
     L.polyline(nPts,{color:'#3a7bd5',weight:3,opacity:0.75,dashArray:'8,5'}).addTo(map);
     addArrows(map,nPts,'#3a7bd5');
@@ -1258,9 +1254,9 @@
     L.polyline(cPts,{color:'#f5a623',weight:2.5,opacity:0.7,dashArray:'7,5'}).addTo(map);
     addArrows(map,cPts,'#f5a623');
     waypoints.forEach(wp=>{
+      if(wp.name==='베르겐 귀환') return; // 출발과 동일 장소 → 마커 하나로 통합
       let color=wp.color, pos=wp.latlng, disp=wp.name;
-      if(wp.name==='베르겐'){ color='#16a34a'; disp='베르겐 출발'; }
-      else if(wp.name==='베르겐 귀환'){ color='#ef4444'; pos=[wp.latlng[0]-0.055, wp.latlng[1]-0.075]; }
+      if(wp.name==='베르겐'){ color='#16a34a'; disp='베르겐 출발·귀환'; }
       const dot=`<div style="width:11px;height:11px;border-radius:50%;background:${color};border:2.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35);margin:0 auto"></div>`;
       const label=`<div style="background:rgba(20,20,40,0.82);color:#fff;border-radius:5px;padding:2px 6px;font-size:9px;font-weight:700;white-space:nowrap;line-height:1.35;text-align:center;margin-top:2px">${wp.day}<br>${disp}</div>`;
       L.marker(pos,{icon:L.divIcon({html:`<div style="display:flex;flex-direction:column;align-items:center;pointer-events:none">${dot}${label}</div>`,className:'',iconSize:[70,42],iconAnchor:[35,8]})}).addTo(map);
@@ -1283,45 +1279,6 @@
     });
   }
   document.querySelectorAll('.day-tips-body .tip-item').forEach(wireTipItem);
-
-  // ── 경로 탭: 날짜 버튼 + 그날 일정 표시 ──
-  (function setupRouteDates(){
-    var row = document.getElementById('routeDateRow');
-    var detail = document.getElementById('routeDayDetail');
-    if(!row || !detail) return;
-    var groups = Array.prototype.slice.call(document.querySelectorAll('#panel-itinerary .day-group'));
-    var dayCenter = {0:[60.39,5.32],1:[60.39,5.32],2:[60.87,7.0],3:[61.5,7.1],4:[62.10,7.05],5:[62.35,6.9],6:[62.5,7.3],7:[60.9,6.5],8:[55.68,12.57],9:[55.68,12.57]};
-
-    function showRouteDay(n, g){
-      var place = (g.querySelector('.day-place')||{}).textContent || '';
-      var sub = (g.querySelector('.day-sub-label')||{}).textContent || '';
-      var body = g.querySelector('.day-body');
-      var clone = body.cloneNode(true);
-      clone.classList.remove('hidden');
-      clone.querySelectorAll('[id]').forEach(function(el){ el.removeAttribute('id'); });
-      clone.querySelectorAll('.sch-price-panel, .car-info-panel, .day-tips-body').forEach(function(el){ el.classList.remove('hidden'); });
-      clone.querySelectorAll('.price-btn').forEach(function(el){ el.remove(); });
-      clone.querySelectorAll('.tip-item').forEach(wireTipItem);
-      detail.innerHTML = '<div class="route-day-title">🗓️ ' + sub + ' · ' + place + '</div>';
-      detail.appendChild(clone);
-      if(detail.scrollIntoView) detail.scrollIntoView({behavior:'smooth', block:'nearest'});
-    }
-
-    groups.forEach(function(g){
-      var n = +String(g.id).replace('day-','');
-      var dateEl = g.querySelector('.ddb-date'), dowEl = g.querySelector('.ddb-dow');
-      var b = document.createElement('button');
-      b.className = 'route-date-btn'; b.type = 'button';
-      b.innerHTML = '<span class="rdb-d">' + (dateEl?dateEl.textContent.trim():('D'+n)) + '</span><span class="rdb-w">' + (dowEl?dowEl.textContent.trim():'') + '</span>';
-      b.addEventListener('click', function(){
-        row.querySelectorAll('.route-date-btn').forEach(function(x){ x.classList.remove('active'); });
-        b.classList.add('active');
-        showRouteDay(n, g);
-        if(dayCenter[n] && window._tripMapInstance){ try{ window._tripMapInstance.setView(dayCenter[n], n===0?6:8, {animate:true}); }catch(e){} }
-      });
-      row.appendChild(b);
-    });
-  })();
 
   (function loadLeaflet(){
     const s=document.createElement('script');
