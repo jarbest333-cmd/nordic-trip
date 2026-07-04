@@ -294,15 +294,16 @@
     #tripMap { width: 100%; height: 100%; }
     .tip-item.tip-clickable { cursor: pointer; border-radius: 8px; padding-left: 6px; margin-left: -6px; transition: background .15s; -webkit-tap-highlight-color: rgba(0,0,0,.04); }
     .tip-item.tip-clickable:active { background: #eef3ff; }
-    .tip-item.tip-active { background: #eaf1ff; }
-    .tip-item.tip-active .tip-name { color: #1d4ed8; }
-    .tips-map-wrap { margin: 10px 0 2px; }
-    .tips-map-wrap.hidden { display: none; }
-    .tips-map-cap { font-size: 11px; color: #6b7a90; margin-bottom: 6px; line-height: 1.4; }
-    .tips-map { width: 100%; height: 190px; border-radius: 12px; overflow: hidden; background: #e8ecf2; }
-    .tips-map .leaflet-container { font-family: inherit; }
-    .dm-pin { display: flex; flex-direction: column; align-items: center; }
-    .dm-pin .dm-emoji { width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 2.5px solid #3a7bd5; box-shadow: 0 1px 6px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+    .route-date-row { display: flex; gap: 7px; overflow-x: auto; padding: 4px 2px 12px; -webkit-overflow-scrolling: touch; }
+    .route-date-row::-webkit-scrollbar { display: none; }
+    .route-date-btn { flex: 0 0 auto; min-width: 46px; padding: 7px 10px; border: 1.5px solid #e4e8ef; border-radius: 12px; background: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; font-family: inherit; }
+    .route-date-btn .rdb-d { font-size: 15px; font-weight: 800; color: #1a1a2e; line-height: 1; }
+    .route-date-btn .rdb-w { font-size: 10px; color: #8b9ab0; }
+    .route-date-btn.active { background: #2a6dd9; border-color: #2a6dd9; }
+    .route-date-btn.active .rdb-d, .route-date-btn.active .rdb-w { color: #fff; }
+    .route-day-detail { margin-top: 4px; }
+    .route-day-title { font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 6px 2px 12px; }
+    .route-hint { text-align: center; color: #9aa7b8; font-size: 13px; padding: 26px 12px; line-height: 1.5; }
     .leaflet-popup-content-wrapper { border-radius: 10px !important; font-family: -apple-system,'Apple SD Gothic Neo',sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,.15) !important; }
     .leaflet-popup-content { font-size: 12px; margin: 8px 12px; }
     .map-open-btn { display: flex; align-items: center; gap: 6px; justify-content: center; background: #fff; border: 1.5px solid #e4e8ef; border-radius: 12px; padding: 10px; font-size: 12px; font-weight: 700; color: #1a1a2e; text-decoration: none; margin-top: 6px; }
@@ -1107,83 +1108,9 @@
       <a class="map-open-btn" href="https://maps.app.goo.gl/PWbXh29reK59HAGb7" target="_blank"><span>📍</span> 내 저장 구글 지도 열기</a>
     </div>
 
-    <div class="country-divider">
-      <div class="country-divider-line"></div>
-      <div class="country-badge badge-norway">🇳🇴 노르웨이 명소</div>
-      <div class="country-divider-line"></div>
-    </div>
-
-    <div class="place-card" id="place-geiranger">
-      <div class="place-emo">🏔️</div>
-      <div class="place-body"><div class="place-name">게이랑에르 피오르</div><div class="place-desc">유네스코 세계유산 · 일곱자매 폭포 · 신랑 폭포</div><div class="place-tag-row"><span class="ptag ptag-nature">자연</span><span class="ptag ptag-view">뷰포인트</span></div></div>
-      <div class="place-star">⭐</div>
-    </div>
-    <div class="place-card" id="place-njofjord">
-      <div class="place-emo">⛴️</div>
-      <div class="place-body"><div class="place-name">뇨르달스피오르</div><div class="place-desc">구드방겐~플롬 피오르 보트 · 유네스코 세계유산</div><div class="place-tag-row"><span class="ptag ptag-nature">자연</span><span class="ptag ptag-city">보트투어</span></div></div>
-      <div class="place-star">⭐</div>
-    </div>
-    <div class="place-card" id="place-loen">
-      <div class="place-emo">🚡</div>
-      <div class="place-body"><div class="place-name">로엔 스카이리프트</div><div class="place-desc">세계 최급경사 케이블카 · 로엔 피오르 전망</div><div class="place-tag-row"><span class="ptag ptag-view">전망대</span><span class="ptag ptag-nature">자연</span></div></div>
-      <div class="place-star">⭐</div>
-    </div>
-    <div class="place-card" id="place-flam">
-      <div class="place-emo">🚂</div>
-      <div class="place-body"><div class="place-name">플롬 산악열차</div><div class="place-desc">세계에서 가장 아름다운 기차 여행</div><div class="place-tag-row"><span class="ptag ptag-city">플롬</span><span class="ptag ptag-view">명물</span></div></div>
-      <div class="place-star">⭐</div>
-    </div>
-    <div class="place-card" id="place-trollstigen">
-      <div class="place-emo">🌀</div>
-      <div class="place-body"><div class="place-name">트롤스티겐</div><div class="place-desc">11개 헤어핀 커브 산악도로 · 노르웨이 국가관광루트</div><div class="place-tag-row"><span class="ptag ptag-view">드라이브</span><span class="ptag ptag-nature">자연</span></div></div>
-      <div class="place-star">⭐</div>
-    </div>
-    <div class="place-card" id="place-dalsnibba">
-      <div class="place-emo">🌅</div>
-      <div class="place-body"><div class="place-name">달스니바 전망대</div><div class="place-desc">게이랑에르 피오르 최고의 뷰포인트 · 해발 1,476m</div><div class="place-tag-row"><span class="ptag ptag-view">전망대</span><span class="ptag ptag-nature">자연</span></div></div>
-      <div class="place-star">⭐</div>
-    </div>
-    <div class="place-card" id="place-bryggen">
-      <div class="place-emo">🏘️</div>
-      <div class="place-body"><div class="place-name">브뤼겐 (Bryggen)</div><div class="place-desc">유네스코 세계유산 목조 건물군</div><div class="place-tag-row"><span class="ptag ptag-history">문화</span><span class="ptag ptag-city">베르겐</span></div></div>
-      <div class="place-star">📌</div>
-    </div>
-    <div class="place-card" id="place-alesund">
-      <div class="place-emo">🏙️</div>
-      <div class="place-body"><div class="place-name">올레순 · 악슬라 산 전망대</div><div class="place-desc">아르누보 도시 · 418계단 · 도시 전경</div><div class="place-tag-row"><span class="ptag ptag-view">전망대</span><span class="ptag ptag-city">올레순</span></div></div>
-      <div class="place-star">📌</div>
-    </div>
-    <div class="place-card" id="place-floyen">
-      <div class="place-emo">🚡</div>
-      <div class="place-body"><div class="place-name">플뢰이엔 케이블카</div><div class="place-desc">베르겐 전경 · 정상 하이킹 · 도심 접근 용이</div><div class="place-tag-row"><span class="ptag ptag-view">전망대</span><span class="ptag ptag-city">베르겐</span></div></div>
-      <div class="place-star">📌</div>
-    </div>
-
-    <div class="country-divider">
-      <div class="country-divider-line"></div>
-      <div class="country-badge badge-denmark">🇩🇰 코펜하겐 명소</div>
-      <div class="country-divider-line"></div>
-    </div>
-
-    <div class="place-card" id="place-nyhavn">
-      <div class="place-emo">🛶</div>
-      <div class="place-body"><div class="place-name">뉘하운 운하</div><div class="place-desc">형형색색 건물 · 카페 · 보트 투어</div><div class="place-tag-row"><span class="ptag ptag-city">명소</span><span class="ptag ptag-history">문화</span></div></div>
-      <div class="place-star">⭐</div>
-    </div>
-    <div class="place-card" id="place-mermaid">
-      <div class="place-emo">🧜</div>
-      <div class="place-body"><div class="place-name">인어공주 동상</div><div class="place-desc">코펜하겐 상징 · 항구 산책로</div><div class="place-tag-row"><span class="ptag ptag-city">랜드마크</span></div></div>
-      <div class="place-star">📌</div>
-    </div>
-    <div class="place-card" id="place-christiansborg">
-      <div class="place-emo">🏰</div>
-      <div class="place-body"><div class="place-name">크리스티안스보르 궁전</div><div class="place-desc">덴마크 의회 · 일부 무료 입장</div><div class="place-tag-row"><span class="ptag ptag-history">역사</span><span class="ptag ptag-city">코펜하겐</span></div></div>
-      <div class="place-star">📌</div>
-    </div>
-
-    <div class="memo-box" style="margin-top:12px;">
-      <div class="memo-hd">⭐ 범례</div>
-      <div class="memo-txt">⭐ 꼭 가야 할 곳 &nbsp;·&nbsp; 📌 가고 싶은 곳<br>일정 탭의 장소명 ↗ 클릭하면 여기로 연결돼요</div>
+    <div class="route-date-row" id="routeDateRow"></div>
+    <div class="route-day-detail" id="routeDayDetail">
+      <div class="route-hint">위 날짜를 누르면 그날 일정이 여기에 표시돼요 🗓️</div>
     </div>
   </div><!-- /places -->
 
@@ -1339,144 +1266,64 @@
     L.polyline(cPts,{color:'#f5a623',weight:2.5,opacity:0.7,dashArray:'7,5'}).addTo(map);
     addArrows(map,cPts,'#f5a623');
     waypoints.forEach(wp=>{
-      const dot=`<div style="width:11px;height:11px;border-radius:50%;background:${wp.color};border:2.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35);margin:0 auto"></div>`;
-      const label=`<div style="background:rgba(20,20,40,0.82);color:#fff;border-radius:5px;padding:2px 6px;font-size:9px;font-weight:700;white-space:nowrap;line-height:1.35;text-align:center;margin-top:2px">${wp.day}<br>${wp.name}</div>`;
-      L.marker(wp.latlng,{icon:L.divIcon({html:`<div style="display:flex;flex-direction:column;align-items:center;pointer-events:none">${dot}${label}</div>`,className:'',iconSize:[70,42],iconAnchor:[35,8]})}).addTo(map);
+      let color=wp.color, pos=wp.latlng, disp=wp.name;
+      if(wp.name==='베르겐'){ color='#16a34a'; disp='베르겐 출발'; }
+      else if(wp.name==='베르겐 귀환'){ color='#ef4444'; pos=[wp.latlng[0]-0.055, wp.latlng[1]-0.075]; }
+      const dot=`<div style="width:11px;height:11px;border-radius:50%;background:${color};border:2.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35);margin:0 auto"></div>`;
+      const label=`<div style="background:rgba(20,20,40,0.82);color:#fff;border-radius:5px;padding:2px 6px;font-size:9px;font-weight:700;white-space:nowrap;line-height:1.35;text-align:center;margin-top:2px">${wp.day}<br>${disp}</div>`;
+      L.marker(pos,{icon:L.divIcon({html:`<div style="display:flex;flex-direction:column;align-items:center;pointer-events:none">${dot}${label}</div>`,className:'',iconSize:[70,42],iconAnchor:[35,8]})}).addTo(map);
     });
     setTimeout(()=>map.invalidateSize(),200);
   }
 
-  /* ── 날짜별 미니 지도 (경로 + 명소) ── */
-  const dayMapData = {
-    1: { route:[[60.3913,5.3221]], spots:[
-      {n:'브뤼겐 (Bryggen)', e:'🏘️', ll:[60.3975,5.3225]},
-      {n:'플뢰이엔 산 (Fløibanen)', e:'⛰️', ll:[60.3958,5.3510]},
-      {n:'피쉬마켓 (Fisketorget)', e:'🐟', ll:[60.3955,5.3235]},
-      {n:'브뤼겐스 박물관', e:'🏛️', ll:[60.3984,5.3218]},
-      {n:'코데 미술관 (KODE)', e:'🎨', ll:[60.3915,5.3270]},
-    ]},
-    2: { route:[[60.3913,5.3221],[60.8775,6.8313],[60.8632,7.1186]], spots:[
-      {n:'스탈하임 전망대 (Stalheim)', e:'🛣️', ll:[60.8339,6.6669]},
-      {n:'뇨뢰피오르 크루즈 (Nærøyfjord)', e:'🚢', ll:[60.8833,6.9000]},
-      {n:'나르다르헤임르 바이킹 빌리지', e:'🛖', ll:[60.8760,6.8330]},
-      {n:'운드레달 목조교회', e:'⛪', ll:[60.9203,7.1017]},
-      {n:'스테가스테인 전망대 (Stegastein)', e:'🏔️', ll:[60.9036,7.2072]},
-    ]},
-    3: { route:[[60.8632,7.1186],[61.0990,7.4764],[61.8685,6.8525]], spots:[
-      {n:'플롬 산악열차 (Flåmsbana)', e:'🚞', ll:[60.8632,7.1136]},
-      {n:'쇼포센 폭포 (Kjosfossen)', e:'💧', ll:[60.8340,7.2030]},
-      {n:'로엔 스카이리프트 (Loen Skylift)', e:'🚡', ll:[61.8685,6.8525]},
-      {n:'브릭스달 빙하 (Briksdalsbreen)', e:'🧊', ll:[61.6646,6.8620]},
-      {n:'이너피오르 (Innvikfjorden)', e:'🏞️', ll:[61.8500,6.7000]},
-    ]},
-    4: { route:[[61.8685,6.8525],[62.0888,6.8859],[62.1024,7.2052]], spots:[
-      {n:'게이랑에르 피오르 카페리', e:'⛴️', ll:[62.0950,7.0450]},
-      {n:'일곱자매 폭포 (De Syv Søstrene)', e:'💦', ll:[62.0972,7.1417]},
-      {n:'독수리 로드 (Ørnesvingen)', e:'🦅', ll:[62.1075,7.1739]},
-      {n:'달스니바 스카이워크 (Dalsnibba)', e:'🏔️', ll:[62.0553,7.2733]},
-      {n:'신부의 베일 폭포 (Brudesløret)', e:'💧', ll:[62.0983,7.1300]},
-    ]},
-    5: { route:[[62.1024,7.2052],[62.4682,7.6591],[62.4722,6.1495]], spots:[
-      {n:'악슬라 전망대 (Fjellstua)', e:'🔭', ll:[62.4722,6.1590]},
-      {n:'유겐트스틸센터렛', e:'🏛️', ll:[62.4722,6.1547]},
-      {n:'아틀란틱 해양공원', e:'🐟', ll:[62.4586,6.0872]},
-      {n:'순뫼레 박물관', e:'🏛️', ll:[62.4508,6.2361]},
-      {n:'Brosundet 운하', e:'🌅', ll:[62.4720,6.1520]},
-    ]},
-    6: { route:[[62.4722,6.1495],[62.4581,7.6706],[62.5675,7.6875]], spots:[
-      {n:'트롤스티엔 (Trollstigen)', e:'🛣️', ll:[62.4581,7.6706]},
-      {n:'트롤스티엔 방문자 센터', e:'🏢', ll:[62.4581,7.6706]},
-      {n:'롬스달렌 계곡 (Romsdalen)', e:'⛰️', ll:[62.4500,7.7500]},
-      {n:'히외룬피오르 (Hjørundfjord)', e:'🏞️', ll:[62.2000,6.7500]},
-      {n:'안달스네스 (Åndalsnes)', e:'🏘️', ll:[62.5675,7.6875]},
-    ]},
-    7: { route:[[61.5000,6.2800],[60.9036,7.2072],[60.6294,6.4147],[60.3913,5.3221]], spots:[
-      {n:'우르네스 목조교회 (Urnes)', e:'⛪', ll:[61.2922,7.3202]},
-      {n:'스테가스테인 전망대 (Stegastein)', e:'🏔️', ll:[60.9036,7.2072]},
-      {n:'소그네피오르 카페리 (Sognefjord)', e:'⛴️', ll:[61.1000,6.6000]},
-      {n:'보스 마을 (Voss)', e:'🏘️', ll:[60.6294,6.4147]},
-      {n:'베르겐 요새 (Bergenhus)', e:'🏰', ll:[60.3997,5.3167]},
-    ]},
-    8: { route:[], spots:[
-      {n:'뉘하운 (Nyhavn)', e:'⚓', ll:[55.6797,12.5903]},
-      {n:'크리스티안스보르 궁전 탑', e:'🏛️', ll:[55.6759,12.5800]},
-      {n:'로젠보르 성 (Rosenborg)', e:'🏰', ll:[55.6857,12.5772]},
-      {n:'스트뢰이에 (Strøget)', e:'🛍️', ll:[55.6786,12.5750]},
-      {n:'인어공주 상 (Little Mermaid)', e:'🧜', ll:[55.6929,12.5993]},
-    ]},
-    9: { route:[], spots:[
-      {n:'뉘하운 이른 아침 (Nyhavn)', e:'⚓', ll:[55.6797,12.5903]},
-      {n:'티볼리 공원 (Tivoli)', e:'🎡', ll:[55.6737,12.5681]},
-      {n:'스트뢰이에 (Strøget)', e:'🛍️', ll:[55.6786,12.5750]},
-      {n:'칼스버그 방문자 센터 (Carlsberg)', e:'🍺', ll:[55.6653,12.5386]},
-      {n:'CPH 공항 면세점', e:'✈️', ll:[55.6180,12.6508]},
-    ]},
-  };
-
-  // ── '오늘 가볼 만한 곳' 온디맨드 위치 지도 ──
-  const _tipsMaps = {};   // dayNum -> Leaflet map
-  const _tipsSel  = {};   // dayNum -> 선택된 index
-
-  function ensureTipsMap(n, cb){
-    if(_tipsMaps[n]){ cb(_tipsMaps[n]); return; }
-    if(!_leafletReady || typeof L==='undefined'){ setTimeout(()=>ensureTipsMap(n,cb),150); return; }
-    const el = document.getElementById('tipsmap-'+n); if(!el) return;
-    if(!el.offsetParent || el.clientHeight===0){ setTimeout(()=>ensureTipsMap(n,cb),150); return; }
-    const map = L.map('tipsmap-'+n, {zoomControl:false, attributionControl:false, dragging:true, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, keyboard:false, touchZoom:true, tap:true});
-    _tipsMaps[n] = map;
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
-    const data = dayMapData[n];
-    if(data && data.route && data.route.length>=2){
-      L.polyline(data.route,{color:'#3a7bd5',weight:2.5,opacity:.5,dashArray:'6,6'}).addTo(map);
-    }
-    map._spotMarker = null;
-    setTimeout(()=>map.invalidateSize(),200);
-    cb(map);
-  }
-
-  function showTipLocation(n, idx){
-    const data = dayMapData[n]; if(!data || !data.spots[idx]) return;
-    const spot = data.spots[idx];
-    const wrap = document.getElementById('tipsmapwrap-'+n);
-    // 같은 항목을 이미 선택한 상태에서 다시 탭 -> 구글지도
-    if(_tipsSel[n]===idx && wrap && !wrap.classList.contains('hidden')){
-      window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(spot.n),'_blank','noopener');
-      return;
-    }
-    _tipsSel[n] = idx;
-    const list = document.getElementById('tips-'+n);
-    if(list) list.querySelectorAll('.tip-item').forEach((it,i)=>it.classList.toggle('tip-active', i===idx));
-    if(wrap) wrap.classList.remove('hidden');
-    const cap = document.getElementById('tipscap-'+n);
-    if(cap) cap.innerHTML = '📍 <b>'+spot.n+'</b> · 한 번 더 누르면 구글지도로 열려요';
-    ensureTipsMap(n,(map)=>{
-      if(map._spotMarker) map.removeLayer(map._spotMarker);
-      const html = '<div class="dm-pin"><div class="dm-emoji">'+(spot.e||'📍')+'</div></div>';
-      map._spotMarker = L.marker(spot.ll,{icon:L.divIcon({html:html,className:'',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map);
-      map._spotMarker.bindPopup('<b>'+spot.n+'</b>');
-      map.invalidateSize();
-      map.setView(spot.ll, 12, {animate:true});
+  // ── '오늘 가볼 만한 곳' → 구글지도로 바로 연결 ──
+  function wireTipItem(it){
+    if(it._tipwired) return; it._tipwired = true;
+    it.classList.add('tip-clickable');
+    it.addEventListener('click', function(){
+      var nm = (it.querySelector('.tip-name')||{}).textContent || '';
+      nm = nm.trim(); if(!nm) return;
+      window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(nm), '_blank', 'noopener');
     });
   }
-  window.showTipLocation = showTipLocation;
+  document.querySelectorAll('.day-tips-body .tip-item').forEach(wireTipItem);
 
-  // tips 목록에 지도 영역 삽입 & 항목 클릭 연결 (동기 실행)
-  (function setupTips(){
-    document.querySelectorAll('.day-group').forEach(g=>{
-      const n = +String(g.id).replace('day-','');
-      const data = dayMapData[n]; if(!data) return;
-      const tips = g.querySelector('.day-tips'); if(!tips) return;
-      const bodyList = tips.querySelector('.day-tips-body'); if(!bodyList) return;
-      bodyList.id = 'tips-'+n;
-      const mapWrap = document.createElement('div');
-      mapWrap.className = 'tips-map-wrap hidden';
-      mapWrap.id = 'tipsmapwrap-'+n;
-      mapWrap.innerHTML = '<div class="tips-map-cap" id="tipscap-'+n+'"></div><div class="tips-map" id="tipsmap-'+n+'"></div>';
-      bodyList.appendChild(mapWrap);
-      bodyList.querySelectorAll('.tip-item').forEach((it,i)=>{
-        it.classList.add('tip-clickable');
-        it.addEventListener('click',()=>showTipLocation(n,i));
+  // ── 경로 탭: 날짜 버튼 + 그날 일정 표시 ──
+  (function setupRouteDates(){
+    var row = document.getElementById('routeDateRow');
+    var detail = document.getElementById('routeDayDetail');
+    if(!row || !detail) return;
+    var groups = Array.prototype.slice.call(document.querySelectorAll('#panel-itinerary .day-group'));
+    var dayCenter = {0:[60.39,5.32],1:[60.39,5.32],2:[60.87,7.0],3:[61.5,7.1],4:[62.10,7.05],5:[62.35,6.9],6:[62.5,7.3],7:[60.9,6.5],8:[55.68,12.57],9:[55.68,12.57]};
+
+    function showRouteDay(n, g){
+      var place = (g.querySelector('.day-place')||{}).textContent || '';
+      var sub = (g.querySelector('.day-sub-label')||{}).textContent || '';
+      var body = g.querySelector('.day-body');
+      var clone = body.cloneNode(true);
+      clone.classList.remove('hidden');
+      clone.querySelectorAll('[id]').forEach(function(el){ el.removeAttribute('id'); });
+      clone.querySelectorAll('.sch-price-panel, .car-info-panel, .day-tips-body').forEach(function(el){ el.classList.remove('hidden'); });
+      clone.querySelectorAll('.price-btn').forEach(function(el){ el.remove(); });
+      clone.querySelectorAll('.tip-item').forEach(wireTipItem);
+      detail.innerHTML = '<div class="route-day-title">🗓️ ' + sub + ' · ' + place + '</div>';
+      detail.appendChild(clone);
+      if(detail.scrollIntoView) detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+
+    groups.forEach(function(g){
+      var n = +String(g.id).replace('day-','');
+      var dateEl = g.querySelector('.ddb-date'), dowEl = g.querySelector('.ddb-dow');
+      var b = document.createElement('button');
+      b.className = 'route-date-btn'; b.type = 'button';
+      b.innerHTML = '<span class="rdb-d">' + (dateEl?dateEl.textContent.trim():('D'+n)) + '</span><span class="rdb-w">' + (dowEl?dowEl.textContent.trim():'') + '</span>';
+      b.addEventListener('click', function(){
+        row.querySelectorAll('.route-date-btn').forEach(function(x){ x.classList.remove('active'); });
+        b.classList.add('active');
+        showRouteDay(n, g);
+        if(dayCenter[n] && window._tripMapInstance){ try{ window._tripMapInstance.setView(dayCenter[n], n===0?6:8, {animate:true}); }catch(e){} }
       });
+      row.appendChild(b);
     });
   })();
 
