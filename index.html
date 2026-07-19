@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- rev 2026-07-04 08:56 redeploy -->
+  <!-- rev 2026-07-19 state-restore redeploy -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>팀. 피오르드🏔️</title>
+
+  <!-- 홈 화면에 추가 (PWA) -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#3a7bd5" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="피오르드" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1233,7 +1244,66 @@
     el.querySelector('.day-body').classList.remove('hidden');
     setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
   }
-  window.addEventListener('DOMContentLoaded', autoOpenToday);
+  /* ── 보던 위치 기억/복원 (카카오톡 인앱 브라우저 새로고침 대응) ── */
+  const NT_KEY = 'nt_state_v1';
+  const NT_FRESH = 6 * 60 * 60 * 1000; // 6시간 이내면 정확히 복원, 그 이상이면 오늘날짜 자동열기
+
+  function ntGetOpenDays() {
+    const open = [];
+    document.querySelectorAll('[id^="day-"]').forEach(el => {
+      const h = el.querySelector('.day-header');
+      if (h && h.classList.contains('open')) open.push(el.id);
+    });
+    return open;
+  }
+
+  function ntSaveState() {
+    try {
+      const activeBtn = document.querySelector('.tab-btn.active');
+      localStorage.setItem(NT_KEY, JSON.stringify({
+        tab: activeBtn ? activeBtn.id : 'tab-itinerary',
+        y: window.scrollY || window.pageYOffset || 0,
+        open: ntGetOpenDays(),
+        ts: Date.now()
+      }));
+    } catch (e) {}
+  }
+
+  function ntRestoreState() {
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem(NT_KEY) || 'null'); } catch (e) {}
+    if (!s || (Date.now() - s.ts) > NT_FRESH) { autoOpenToday(); return; }
+
+    // 펼친 날짜 복원
+    document.querySelectorAll('[id^="day-"]').forEach(el => {
+      const h = el.querySelector('.day-header'), b = el.querySelector('.day-body');
+      if (!h || !b) return;
+      const shouldOpen = s.open && s.open.indexOf(el.id) !== -1;
+      h.classList.toggle('open', shouldOpen);
+      b.classList.toggle('hidden', !shouldOpen);
+    });
+
+    // 탭 복원
+    const btn = s.tab && document.getElementById(s.tab);
+    if (btn && s.tab !== 'tab-itinerary') {
+      switchTab(s.tab.replace('tab-', ''), btn);
+    }
+
+    // 스크롤 위치 복원 (레이아웃 안정화 후 몇 번 재시도)
+    const y = s.y || 0;
+    [40, 180, 400].forEach(t => setTimeout(() => window.scrollTo(0, y), t));
+  }
+
+  window.addEventListener('DOMContentLoaded', ntRestoreState);
+
+  // 스크롤 시 저장(디바운스) + 페이지를 떠날/가려질 때 저장
+  let _ntTimer = null;
+  window.addEventListener('scroll', () => {
+    clearTimeout(_ntTimer);
+    _ntTimer = setTimeout(ntSaveState, 250);
+  }, { passive: true });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) ntSaveState(); });
+  window.addEventListener('pagehide', ntSaveState);
 
   function switchTab(name,btn) {
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));

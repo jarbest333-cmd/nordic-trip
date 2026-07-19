@@ -1,0 +1,15 @@
+{
+  "name": "팀. 피오르드",
+  "short_name": "피오르드",
+  "description": "노르웨이·덴마크 피오르드 여행 일정",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a2a4e",
+  "theme_color": "#3a7bd5",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
