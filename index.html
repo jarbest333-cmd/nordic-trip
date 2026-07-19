@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- rev 2026-07-19c mobile+offline redeploy -->
+  <!-- rev 2026-07-19d swipe-tabs redeploy -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>팀. 피오르드🏔️</title>
@@ -1330,6 +1330,36 @@
       ntScrollTo(y);
     });
   });
+
+  /* ── 좌우 스와이프로 탭 전환 ── */
+  (function () {
+    const TAB_ORDER = ['itinerary', 'transport', 'places', 'info'];
+    const MIN_DX = 60;   // 최소 가로 이동(px)
+    const H_RATIO = 1.8; // 가로가 세로보다 이 배수 이상일 때만 = 옆으로 미는 동작
+    let sx = 0, sy = 0, tracking = false;
+
+    document.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) { tracking = false; return; }
+      const t = e.target;
+      // 지도 위에서 시작한 스와이프는 무시(지도 이동과 충돌)
+      if (t && t.closest && t.closest('.leaflet-container')) { tracking = false; return; }
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
+    }, { passive: true });
+
+    document.addEventListener('touchend', function (e) {
+      if (!tracking) return; tracking = false;
+      const c = e.changedTouches[0];
+      const dx = c.clientX - sx, dy = c.clientY - sy;
+      if (Math.abs(dx) < MIN_DX || Math.abs(dx) < Math.abs(dy) * H_RATIO) return;
+      const activeBtn = document.querySelector('.tab-btn.active');
+      const cur = activeBtn ? TAB_ORDER.indexOf(activeBtn.id.replace('tab-', '')) : 0;
+      if (cur < 0) return;
+      const next = dx < 0 ? cur + 1 : cur - 1; // 왼쪽으로 밀면 다음 탭
+      if (next < 0 || next >= TAB_ORDER.length) return;
+      const btn = document.getElementById('tab-' + TAB_ORDER[next]);
+      if (btn) switchTab(TAB_ORDER[next], btn);
+    }, { passive: true });
+  })();
 
   // 스크롤 시 저장(디바운스) + 페이지를 떠날/가려질 때 저장
   let _ntTimer = null;
