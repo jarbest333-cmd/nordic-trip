@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- rev 2026-07-19d swipe-tabs redeploy -->
+  <!-- rev 2026-07-19e resume-reload redeploy -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>팀. 피오르드🏔️</title>
@@ -1316,19 +1316,18 @@
 
   window.addEventListener('DOMContentLoaded', ntRestoreState);
 
-  // 뒤로가기 캐시(bfcache)로 복원될 땐 DOMContentLoaded가 안 뛰고 흰 화면이 뜰 수 있어
-  // 강제 리페인트 + 스크롤 재적용으로 화면을 되살린다.
+  // 구글지도 등 다른 앱에 나갔다 돌아올 때 iOS에서 화면이 흰색으로 남는 문제.
+  // 앱 전환 복귀(visibilitychange)와 뒤로가기 캐시(pageshow) 모두, 오래 나가
+  // 있었으면 새로고침으로 확실히 되살린다. 스크롤·탭·펼친 날짜가 저장돼 있어
+  // 새로고침해도 보던 자리로 그대로 복원된다.
+  let _ntHiddenAt = 0, _ntReloading = false;
+  function ntResume() {
+    if (_ntReloading) return;
+    _ntReloading = true;
+    location.reload();
+  }
   window.addEventListener('pageshow', function (e) {
-    if (!e.persisted) return;
-    let s = null;
-    try { s = JSON.parse(localStorage.getItem(NT_KEY) || 'null'); } catch (err) {}
-    const y = s ? (s.y || 0) : (window.scrollY || 0);
-    const de = document.documentElement;
-    de.style.visibility = 'hidden';
-    requestAnimationFrame(function () {
-      de.style.visibility = '';
-      ntScrollTo(y);
-    });
+    if (e.persisted) ntResume();
   });
 
   /* ── 좌우 스와이프로 탭 전환 ── */
@@ -1367,7 +1366,15 @@
     clearTimeout(_ntTimer);
     _ntTimer = setTimeout(ntSaveState, 250);
   }, { passive: true });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) ntSaveState(); });
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      _ntHiddenAt = Date.now();
+      ntSaveState();
+    } else if (_ntHiddenAt && (Date.now() - _ntHiddenAt) > 2000) {
+      // 2초 넘게 나가 있다 돌아옴(구글지도 등) → 새로고침으로 흰 화면 방지
+      ntResume();
+    }
+  });
   window.addEventListener('pagehide', ntSaveState);
 
   function switchTab(name,btn) {
