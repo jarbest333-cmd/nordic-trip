@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- rev 2026-07-19b bfcache-fix redeploy -->
+  <!-- rev 2026-07-19c mobile+offline redeploy -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>팀. 피오르드🏔️</title>
 
   <!-- 홈 화면에 추가 (PWA) -->
@@ -11,24 +11,38 @@
   <meta name="theme-color" content="#3a7bd5" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="피오르드" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+  <script>
+    /* 오프라인 지원 서비스워커 등록 */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function () {});
+      });
+    }
+  </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; -webkit-tap-highlight-color: transparent; }
+    html {
+      font-size: 16px; -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+      overscroll-behavior: none; /* 당겨서 새로고침·바운스 방지 */
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       background: #f2f4f7; color: #1a1a2e;
-      max-width: 430px; margin: 0 auto; min-height: 100vh;
+      max-width: 430px; margin: 0 auto;
+      min-height: 100vh; min-height: 100dvh; /* 모바일 주소창 대응 */
+      overscroll-behavior: none;
     }
 
     /* ── HEADER ── */
     .app-header {
-      background: #fff; padding: 16px 20px 12px;
+      background: #fff; padding: max(16px, env(safe-area-inset-top)) 20px 12px;
       border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100;
     }
     .header-top { display: flex; align-items: flex-start; justify-content: space-between; }
@@ -98,7 +112,7 @@
     .place-card.highlighted,.stay-card.highlighted { animation: highlightPlace 1.6s ease-out; }
 
     /* ── CONTENT ── */
-    .content { padding: 14px 14px 90px; }
+    .content { padding: 14px 14px calc(90px + env(safe-area-inset-bottom)); }
     .panel { display: none; } .panel.active { display: block; }
 
     .country-divider { display: flex; align-items: center; gap: 8px; margin: 16px 0 10px; }
