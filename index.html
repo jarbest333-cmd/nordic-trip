@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- rev 2026-07-19 state-restore redeploy -->
+  <!-- rev 2026-07-19b bfcache-fix redeploy -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>팀. 피오르드🏔️</title>
@@ -1269,6 +1269,12 @@
     } catch (e) {}
   }
 
+  // 콘텐츠 높이를 넘지 않게 스크롤 (넘으면 흰 화면이 보이므로 clamp)
+  function ntScrollTo(y) {
+    const max = Math.max(0, (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight);
+    window.scrollTo(0, Math.min(Math.max(0, y || 0), max));
+  }
+
   function ntRestoreState() {
     let s = null;
     try { s = JSON.parse(localStorage.getItem(NT_KEY) || 'null'); } catch (e) {}
@@ -1289,12 +1295,27 @@
       switchTab(s.tab.replace('tab-', ''), btn);
     }
 
-    // 스크롤 위치 복원 (레이아웃 안정화 후 몇 번 재시도)
+    // 스크롤 위치 복원 (레이아웃 안정화 후 몇 번 재시도, 콘텐츠 높이 내로 clamp)
     const y = s.y || 0;
-    [40, 180, 400].forEach(t => setTimeout(() => window.scrollTo(0, y), t));
+    [40, 180, 400].forEach(t => setTimeout(() => ntScrollTo(y), t));
   }
 
   window.addEventListener('DOMContentLoaded', ntRestoreState);
+
+  // 뒤로가기 캐시(bfcache)로 복원될 땐 DOMContentLoaded가 안 뛰고 흰 화면이 뜰 수 있어
+  // 강제 리페인트 + 스크롤 재적용으로 화면을 되살린다.
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem(NT_KEY) || 'null'); } catch (err) {}
+    const y = s ? (s.y || 0) : (window.scrollY || 0);
+    const de = document.documentElement;
+    de.style.visibility = 'hidden';
+    requestAnimationFrame(function () {
+      de.style.visibility = '';
+      ntScrollTo(y);
+    });
+  });
 
   // 스크롤 시 저장(디바운스) + 페이지를 떠날/가려질 때 저장
   let _ntTimer = null;
