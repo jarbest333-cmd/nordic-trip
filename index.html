@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- rev 2026-07-19g itinerary-revamp redeploy -->
+  <!-- rev 2026-07-19h rib-booking-link redeploy -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>팀. 피오르드🏔️</title>
@@ -637,10 +637,8 @@
             <span class="tips-chevron">▼</span>
           </div>
           <div class="day-tips-body hidden">
-            <div class="tip-item" data-map="https://www.google.com/maps/search/?api=1&query=N%C3%A6r%C3%B8yfjord+RIB+safari+Fl%C3%A5m"><div class="tip-emoji">🚤</div><div><div class="tip-name">네뢰이피오르 RIB 사파리 ⭐추천</div><div class="tip-desc">플롬 출발 고속보트로 유네스코 최협 피오르 질주 · 강력 추천 액티비티</div></div></div>
-            <div class="tip-item" data-map="https://maps.app.goo.gl/Ehj2QyCyQiYRaEFh8"><div class="tip-emoji">🛣️</div><div><div class="tip-name">스탈하임 전망대 (Stalheim)</div><div class="tip-desc">구드방겐 직전, 13개 헤어핀 커브 절벽 도로</div></div></div>
-            <div class="tip-item"><div class="tip-emoji">🚢</div><div><div class="tip-name">뇨뢰피오르 크루즈 (Nærøyfjord)</div><div class="tip-desc">유네스코 세계유산 최협 피오르 · 구드방겐↔플롬 운항</div></div></div>
-            <div class="tip-item" data-map="https://www.google.com/maps/search/?api=1&query=Njardarheimr+Viking+Valley+Gudvangen"><div class="tip-emoji">🛖</div><div><div class="tip-name">나르다르헤임르 바이킹 빌리지</div><div class="tip-desc">구드방겐 내 실제 규모 바이킹 마을 체험</div></div></div>
+            <div class="tip-item" data-map="https://booking.fjordsafari.com/"><div class="tip-emoji">🚤</div><div><div class="tip-name">네뢰이피오르 RIB 사파리 ⭐추천 · 예약</div><div class="tip-desc">플롬 출발 고속보트로 유네스코 최협 피오르 질주 · 탭하면 예약 페이지</div></div></div>
+            <div class="tip-item" data-map="https://maps.app.goo.gl/wToPUYwa5NYiEreQ8"><div class="tip-emoji">🛣️</div><div><div class="tip-name">스탈하임 전망대 (Stalheim)</div><div class="tip-desc">구드방겐 직전, 13개 헤어핀 커브 절벽 도로</div></div></div>
           </div>
         </div>
       </div>
@@ -1558,7 +1556,10 @@
   }
   function ntOpenMap(url){
     if(!url) return;
-    if(ntIsStandalone()){ window.location.href = url; }
+    // 지도 앱으로 넘어가는 유니버설 링크만 홈 화면 앱에서 최상위 이동(빈 창 방지).
+    // 예약 사이트 등 일반 웹은 인앱 브라우저(X로 닫고 복귀)로 열어 갇히지 않게.
+    var isMapApp = /maps\.app\.goo\.gl|google\.[a-z.]+\/maps|maps\.google/i.test(url);
+    if(ntIsStandalone() && isMapApp){ window.location.href = url; }
     else { window.open(url, '_blank', 'noopener'); }
   }
 
