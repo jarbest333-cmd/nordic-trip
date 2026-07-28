@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- rev 2026-07-19f maplink-standalone redeploy -->
+  <!-- rev 2026-07-19g itinerary-revamp redeploy -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>팀. 피오르드🏔️</title>
@@ -606,8 +606,8 @@
           <div class="sch-body">
             <div class="sch-route-label">
               <div class="srl-from">🚗 베르겐</div>
-              <div class="srl-via">↓ 소그네피오르 방향</div>
-              <div class="srl-to">구드방겐</div>
+              <div class="srl-via">↓ 전부 차로 이동 · 소그네피오르 방향</div>
+              <div class="srl-to">구드방겐 → 플롬</div>
             </div>
             <div class="sch-tag t-move">이동</div>
           </div>
@@ -637,10 +637,10 @@
             <span class="tips-chevron">▼</span>
           </div>
           <div class="day-tips-body hidden">
+            <div class="tip-item" data-map="https://www.google.com/maps/search/?api=1&query=N%C3%A6r%C3%B8yfjord+RIB+safari+Fl%C3%A5m"><div class="tip-emoji">🚤</div><div><div class="tip-name">네뢰이피오르 RIB 사파리 ⭐추천</div><div class="tip-desc">플롬 출발 고속보트로 유네스코 최협 피오르 질주 · 강력 추천 액티비티</div></div></div>
             <div class="tip-item" data-map="https://maps.app.goo.gl/Ehj2QyCyQiYRaEFh8"><div class="tip-emoji">🛣️</div><div><div class="tip-name">스탈하임 전망대 (Stalheim)</div><div class="tip-desc">구드방겐 직전, 13개 헤어핀 커브 절벽 도로</div></div></div>
             <div class="tip-item"><div class="tip-emoji">🚢</div><div><div class="tip-name">뇨뢰피오르 크루즈 (Nærøyfjord)</div><div class="tip-desc">유네스코 세계유산 최협 피오르 · 구드방겐↔플롬 운항</div></div></div>
             <div class="tip-item" data-map="https://www.google.com/maps/search/?api=1&query=Njardarheimr+Viking+Valley+Gudvangen"><div class="tip-emoji">🛖</div><div><div class="tip-name">나르다르헤임르 바이킹 빌리지</div><div class="tip-desc">구드방겐 내 실제 규모 바이킹 마을 체험</div></div></div>
-            <div class="tip-item"><div class="tip-emoji">🏔️</div><div><div class="tip-name">스테가스테인 전망대 (Stegastein)</div><div class="tip-desc">아우를란 위 650m 절벽 돌출 전망 데크</div></div></div>
           </div>
         </div>
       </div>
@@ -653,7 +653,7 @@
           <div class="ddb-dow">월</div>
         </div>
         <div class="day-info">
-          <div class="day-place">로엔</div>
+          <div class="day-place">플롬 → 스테가스테인 → 브릭스달 → 로엔</div>
           <div class="day-sub-label">8월 10일</div>
         </div>
         <div class="day-flag">🇳🇴</div>
@@ -663,11 +663,41 @@
         <div class="sch-item">
           <div class="sch-time"></div>
           <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://www.google.com/maps/search/?api=1&query=Stegastein+Viewpoint+Aurland')">
+            <div class="sch-label">🏔️ 스테가스테인 전망대 <span class="place-arrow">↗</span></div>
+            <div class="sch-sub">방스가든 출발 · 아우를란 위 650m 절벽 돌출 전망 데크</div>
+            <div class="sch-tag t-tour">전망</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
           <div class="sch-body">
             <div class="sch-route-label">
-              <div class="srl-from">🚗 플롬</div>
-              <div class="srl-via">↓ 뢰르달 터널 경유 · 스트린 북쪽</div>
-              <div class="srl-to">로엔</div>
+              <div class="srl-from">⛴️ 카페리 1회 탑승</div>
+              <div class="srl-via">↓ 피오르 횡단</div>
+              <div class="srl-to">브릭스달 빙하 방향</div>
+            </div>
+            <div class="sch-tag t-move">카페리</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://www.google.com/maps/search/?api=1&query=Briksdalsbreen')">
+            <div class="sch-label">❄️ 브릭스달스브레 빙하 <span class="place-arrow">↗</span></div>
+            <div class="sch-sub">주차장에서 45분 하이킹 · 왕복 약 1시간 30분</div>
+            <div class="sch-tag t-tour">하이킹</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body">
+            <div class="sch-route-label">
+              <div class="srl-from">🚗 브릭스달</div>
+              <div class="srl-via">↓ 스트린 방향</div>
+              <div class="srl-to">로엔 (네셋트 캠핑)</div>
             </div>
             <div class="sch-tag t-move">이동</div>
           </div>
@@ -709,7 +739,7 @@
           <div class="ddb-dow">화</div>
         </div>
         <div class="day-info">
-          <div class="day-place">로엔 → 헬레실트 → 게이랑에르</div>
+          <div class="day-place">로엔 → 게이랑에르 → 헬레실트</div>
           <div class="day-sub-label">8월 11일</div>
         </div>
         <div class="day-flag">🇳🇴</div>
@@ -719,13 +749,10 @@
         <div class="sch-item">
           <div class="sch-time"></div>
           <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
-          <div class="sch-body">
-            <div class="sch-route-label">
-              <div class="srl-from">🚗 로엔</div>
-              <div class="srl-via">↓ 순뫼레 방향 해안 드라이브</div>
-              <div class="srl-to">헬레실트</div>
-            </div>
-            <div class="sch-tag t-move">이동</div>
+          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://maps.app.goo.gl/ZLviVNmvBCZbeSFx9')">
+            <div class="sch-label">🚡 로엔 스카이리프트 <span class="place-arrow">↗</span></div>
+            <div class="sch-sub">네셋트 캠핑 출발 · 세계 최급경사 케이블카 · 1011m 정상 파노라마</div>
+            <div class="sch-tag t-tour">액티비티</div>
           </div>
         </div>
         <div class="sch-item">
@@ -733,12 +760,35 @@
           <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
           <div class="sch-body sch-place-link" onclick="goToPlace('place-geiranger')">
             <div class="sch-route-label">
-              <div class="srl-from">⛴️ 헬레실트</div>
-              <div class="srl-via">↓ 피오르 카페리 · 약 1시간</div>
+              <div class="srl-from">🚗 로엔</div>
+              <div class="srl-via">↓ 게이랑에르, 폭포 산책</div>
               <div class="srl-to">게이랑에르 <span class="place-arrow">↗</span></div>
             </div>
-            <div class="sch-sub">세계 최고의 피오르 항로</div>
-            <div class="sch-tag t-move">이동</div>
+            <div class="sch-tag t-tour">관광</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body">
+            <div class="sch-route-label">
+              <div class="srl-from">⛴️ 카페리 1회 (긴 구간)</div>
+              <div class="srl-via">↓ 게이랑에르 → 헬레실트 · 세계 최고의 피오르 항로 약 1시간</div>
+              <div class="srl-to">헬레실트</div>
+            </div>
+            <div class="sch-tag t-move">카페리</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body">
+            <div class="sch-route-label">
+              <div class="srl-from">⛴️ 카페리 1회 탑승</div>
+              <div class="srl-via">↓ 헬레실트에서 다시 카페리</div>
+              <div class="srl-to">Meretes Garden 방향</div>
+            </div>
+            <div class="sch-tag t-move">카페리</div>
           </div>
         </div>
         <div class="sch-item">
@@ -780,7 +830,7 @@
           <div class="ddb-dow">수</div>
         </div>
         <div class="day-info">
-          <div class="day-place">올레순</div>
+          <div class="day-place">Meretes Garden → 올레순</div>
           <div class="day-sub-label">8월 12일</div>
         </div>
         <div class="day-flag">🇳🇴</div>
@@ -792,11 +842,20 @@
           <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
           <div class="sch-body">
             <div class="sch-route-label">
-              <div class="srl-from">🚗 게이랑에르</div>
-              <div class="srl-via">↓ 트롤스티겐 경유</div>
+              <div class="srl-from">🚗 Meretes Garden</div>
+              <div class="srl-via">↓ 순뫼레 방향</div>
               <div class="srl-to">올레순</div>
             </div>
             <div class="sch-tag t-move">이동</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body">
+            <div class="sch-label">📸 올레순 관광</div>
+            <div class="sch-sub">아르누보 건축의 항구 도시 · 자유 관광</div>
+            <div class="sch-tag t-tour">관광</div>
           </div>
         </div>
         <div class="sch-item">
@@ -836,7 +895,7 @@
           <div class="ddb-dow">목</div>
         </div>
         <div class="day-info">
-          <div class="day-place">올레순 → 베르겐 방향</div>
+          <div class="day-place">올레순 → 쇠그네산 → 이욀스테르</div>
           <div class="day-sub-label">8월 13일</div>
         </div>
         <div class="day-flag">🇳🇴</div>
@@ -849,16 +908,25 @@
           <div class="sch-body">
             <div class="sch-route-label">
               <div class="srl-from">🚗 올레순</div>
-              <div class="srl-via">↓ 해안도로 드라이브</div>
-              <div class="srl-to">베르겐 방향</div>
+              <div class="srl-via">↓ 약 245km · 카페리 3회 탑승 (긴 이동)</div>
+              <div class="srl-to">쇠그네산 방향</div>
             </div>
             <div class="sch-tag t-move">이동</div>
           </div>
         </div>
         <div class="sch-item">
           <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://www.google.com/maps/search/?api=1&query=Sognesand+Norway')">
+            <div class="sch-label">🥾 쇠그네산 (Sognesand) 하이킹 <span class="place-arrow">↗</span></div>
+            <div class="sch-sub">이동 중 하이킹 코스</div>
+            <div class="sch-tag t-tour">하이킹</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
           <div class="sch-spine"><div class="spine-dot"></div></div>
-          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://www.google.com/maps/place/%ED%86%A4+%ED%98%B8%ED%85%94+%EC%9D%B4%EC%9A%80%EC%8A%A4%ED%85%8C%EB%A5%B4/@61.571961,6.4787573,17z','_blank')">
+          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://www.google.com/maps/search/?api=1&query=Thon+Hotel+J%C3%B8lster+Skei')">
             <div class="sch-label">🏨 톤 호텔 이욀스테르 <span class="place-arrow">↗</span></div>
             <div class="sch-tag-row">
               <div class="sch-tag t-hotel" style="margin-top:0">숙소</div>
@@ -895,7 +963,7 @@
           <div class="ddb-dow">금</div>
         </div>
         <div class="day-info">
-          <div class="day-place">베르겐 귀환</div>
+          <div class="day-place">이욀스테르 → 베르겐</div>
           <div class="day-sub-label">8월 14일</div>
         </div>
         <div class="day-flag">🇳🇴</div>
@@ -907,8 +975,8 @@
           <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
           <div class="sch-body">
             <div class="sch-route-label">
-              <div class="srl-from">🚗 이욀스테르</div>
-              <div class="srl-via">↓ 렌트카 반납 준비</div>
+              <div class="srl-from">🚗 이욀스테르 (톤 호텔)</div>
+              <div class="srl-via">↓ 약 217km · 카페리 1회 탑승</div>
               <div class="srl-to">베르겐</div>
             </div>
             <div class="sch-tag t-move">이동</div>
@@ -916,8 +984,17 @@
         </div>
         <div class="sch-item">
           <div class="sch-time"></div>
+          <div class="sch-spine"><div class="spine-dot hi"></div><div class="spine-line"></div></div>
+          <div class="sch-body">
+            <div class="sch-label">⚠️ 렌트카 반납 확인 필요</div>
+            <div class="sch-sub">반납 장소·시간 아직 미정 — 예약 확인 필요 (베르겐 시내/공항)</div>
+            <div class="sch-tag t-move">체크</div>
+          </div>
+        </div>
+        <div class="sch-item">
+          <div class="sch-time"></div>
           <div class="sch-spine"><div class="spine-dot"></div></div>
-          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://www.google.com/maps/place/%EC%98%AC%EB%A0%88+%EB%B6%88+%ED%98%B8%ED%85%94+%EC%95%A4%EB%93%9C+%EC%95%84%ED%8C%8C%ED%8A%B8/@60.3923278,5.3195538,17z','_blank')">
+          <div class="sch-body sch-place-link" onclick="ntOpenMap('https://www.google.com/maps/search/?api=1&query=Ole+Bull+Hotel+%26+Apartments+Bergen')">
             <div class="sch-label">🏨 올레 불 호텔 앤 아파트먼트 <span class="place-arrow">↗</span></div>
             <div class="sch-sub">베르겐</div>
             <div class="sch-tag-row">
